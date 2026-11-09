@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Consulta de padrón · Agua Potable Lagos de Moreno</title>
+<meta name="theme-color" content="#FF8200">
+<meta name="robots" content="noindex, nofollow">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Padrón Agua">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Inter:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --naranja:#FF8200; --naranja-osc:#B35300; --naranja-txt:#9A4700;
+    --gris:#5F5F5F; --gris-osc:#3F3F3F; --texto:#2B2B2B; --fondo:#F4F4F4; --linea:#E4E4E4;
+    --rojo-bg:#FDE2E1; --rojo:#A3211B; --verde-bg:#DFF3E4; --verde:#1E6B34;
+    --amb-bg:#FFE9CC; --amb:#8A4B00; --ama-bg:#FFF4BF; --ama:#6B5600;
+    --gris-bg:#ECECEC; --gris-chip:#4A4A4A; --azul-bg:#DCEBFB; --azul:#1F4E8C;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--fondo);color:var(--texto);font-family:Inter,system-ui,sans-serif;font-size:15px}
+  h1,h2,h3,.mont{font-family:Montserrat,sans-serif}
+  button,input{font-family:inherit;font-size:16px}
+  a{color:var(--naranja-txt)}
+  .oculto{display:none !important}
+  .sr{position:absolute;left:-9999px}
+
+  /* ---------- Acceso ---------- */
+  .acceso{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:#fff;border-top:6px solid var(--naranja)}
+  .acceso-caja{width:100%;max-width:380px;display:flex;flex-direction:column;gap:22px}
+  .acceso img{width:240px;max-width:80%;align-self:center}
+  .acceso h1{margin:0;font-size:24px;font-weight:800;color:var(--gris-osc);text-align:center}
+  .acceso p.sub{margin:4px 0 0;text-align:center;color:var(--gris);font-size:14px}
+  .campo{display:flex;flex-direction:column;gap:6px}
+  .campo label{font-size:13px;font-weight:600;color:var(--gris-osc)}
+  .campo input{height:48px;border:1.5px solid #9A9A9A;border-radius:10px;padding:0 14px;color:var(--texto);background:#fff}
+  .campo input:focus{outline:none;border-color:var(--naranja);box-shadow:0 0 0 3px rgba(255,130,0,.2)}
+  .btn{height:50px;border:0;border-radius:10px;background:var(--naranja-osc);color:#fff;font-family:Montserrat,sans-serif;font-weight:700;font-size:16px;cursor:pointer}
+  .btn:disabled{opacity:.6}
+  .btn-sec{height:46px;border:1.5px solid var(--naranja-osc);border-radius:10px;background:#fff;color:var(--naranja-txt);font-weight:600;font-size:14px;cursor:pointer;padding:0 14px}
+  .msg{font-size:14px;padding:10px 12px;border-radius:8px}
+  .msg.err{background:var(--rojo-bg);color:var(--rojo)}
+  .msg.ok{background:var(--verde-bg);color:var(--verde)}
+  .nota{font-size:13px;color:var(--gris);text-align:center;line-height:1.5;margin:0}
+
+  /* ---------- App ---------- */
+  header.barra{background:#fff;border-bottom:4px solid var(--naranja);position:sticky;top:0;z-index:5}
+  .barra-in{max-width:1240px;margin:0 auto;padding:8px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .barra img{height:50px;display:block}
+  .barra .titulo{font-size:19px;font-weight:800;color:var(--gris-osc);margin-left:14px}
+  .barra .der{display:flex;align-items:center;gap:12px;font-size:13px;color:var(--gris)}
+  .avatar{width:44px;height:44px;border-radius:22px;border:0;background:var(--gris);color:#fff;font-family:Montserrat,sans-serif;font-weight:700;font-size:15px;cursor:pointer}
+  .menu-usuario{position:absolute;right:16px;top:66px;background:#fff;border-radius:12px;box-shadow:0 6px 24px rgba(0,0,0,.18);padding:8px;min-width:220px;display:flex;flex-direction:column}
+  .menu-usuario .nom{padding:8px 12px;font-weight:600;color:var(--gris-osc);border-bottom:1px solid var(--linea);margin-bottom:4px}
+  .menu-usuario button{background:none;border:0;text-align:left;padding:12px;border-radius:8px;font-size:15px;cursor:pointer;color:var(--texto)}
+  .menu-usuario button:hover{background:var(--fondo)}
+  .solo-pc{display:none}
+
+  .contenedor{max-width:1240px;margin:0 auto;padding:0 0 16px;display:flex;gap:16px;align-items:flex-start}
+  .panel-buscar{flex:1 1 380px;min-width:0}
+  .panel-ficha{flex:999 1 560px;min-width:0}
+
+  .buscador{background:#fff;padding:16px;display:flex;flex-direction:column;gap:12px}
+  .buscador h1{margin:0;font-size:20px;font-weight:800;color:var(--gris-osc)}
+  .tabs{display:flex;gap:6px;background:#EDEDED;padding:4px;border-radius:10px}
+  .tabs button{flex:1;height:38px;border:0;border-radius:8px;background:transparent;font-size:13px;font-weight:500;color:#4A4A4A;cursor:pointer}
+  .tabs button[aria-pressed="true"]{background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.15);font-weight:600;color:var(--naranja-txt)}
+  .fila-busq{display:flex;gap:8px}
+  .fila-busq input{flex:1;min-width:0;height:48px;border:2px solid var(--naranja);border-radius:10px;padding:0 14px;color:var(--texto)}
+  .fila-busq input:focus{outline:none;box-shadow:0 0 0 3px rgba(255,130,0,.2)}
+  .btn-lupa{width:48px;height:48px;border:0;border-radius:10px;background:var(--naranja-osc);display:flex;align-items:center;justify-content:center;cursor:pointer}
+  .ayuda{margin:0;font-size:12px;color:var(--gris)}
+  .fila-ayuda{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+  .btn-nueva{display:flex;align-items:center;gap:6px;height:40px;padding:0 14px;border:1.5px solid var(--naranja-osc);border-radius:10px;background:#fff;color:var(--naranja-txt);font-weight:600;font-size:14px;cursor:pointer;margin-left:auto}
+  .ficha-acciones{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .btn-imprimir{display:flex;align-items:center;gap:6px;height:44px;padding:0 14px;border:1.5px solid var(--naranja-osc);border-radius:10px;background:#fff;color:var(--naranja-txt);font-weight:600;font-size:14px;cursor:pointer;margin-left:auto}
+  .solo-impresion{display:none}
+
+  .resumen{padding:14px 16px 6px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+  .resumen b{font-family:Montserrat,sans-serif;font-size:14px;color:var(--gris-osc)}
+  .resumen span{font-size:12px;color:var(--gris)}
+  .aviso-lim{margin:0 16px 8px;font-size:12px;color:var(--amb);background:var(--amb-bg);padding:8px 10px;border-radius:8px}
+  .lista{padding:0 16px;display:flex;flex-direction:column;gap:10px}
+  .tarjeta{display:flex;flex-direction:column;gap:5px;background:#fff;border-radius:12px;padding:12px 14px;box-shadow:0 1px 2px rgba(0,0,0,.08);border:0;text-align:left;cursor:pointer;width:100%;color:inherit;border-left:4px solid transparent}
+  .tarjeta.sel{border-left-color:var(--naranja);background:#FFF3E5}
+  .tarjeta .top{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .tarjeta .cta{font-family:Montserrat,sans-serif;font-weight:800;font-size:16px}
+  .tarjeta .tit{font-size:14px;font-weight:600}
+  .tarjeta .dom{font-size:13px;color:var(--gris)}
+  .tarjeta .monto{font-size:15px;font-weight:700}
+  .chip{font-size:12px;font-weight:600;padding:4px 10px;border-radius:20px;white-space:nowrap}
+  .c-rojo{background:var(--rojo-bg);color:var(--rojo)} .c-verde{background:var(--verde-bg);color:var(--verde)}
+  .c-amb{background:var(--amb-bg);color:var(--amb)} .c-ama{background:var(--ama-bg);color:var(--ama)}
+  .c-gris{background:var(--gris-bg);color:var(--gris-chip)} .c-azul{background:var(--azul-bg);color:var(--azul)}
+  .t-rojo{color:var(--rojo)} .t-verde{color:var(--verde)} .t-azul{color:var(--azul)}
+
+  .grupo{border-radius:12px;overflow:hidden;background:#fff}
+  .grupo-cab{background:var(--gris);color:#fff;padding:12px 14px;display:flex;flex-direction:column;gap:2px}
+  .grupo-cab b{font-family:Montserrat,sans-serif;font-size:15px}
+  .grupo-cab span{font-size:12px;color:#EDEDED}
+  .grupo-fila{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 14px;border:0;border-top:1px solid #ECECEC;background:#fff;width:100%;text-align:left;cursor:pointer;min-height:52px;color:inherit}
+  .grupo-fila:first-of-type{border-top:0}
+  .grupo-fila .tit{font-size:14px;font-weight:600}
+  .grupo-fila .dom{font-size:12px;color:var(--gris)}
+  .vacio{background:#fff;border-radius:12px;padding:24px 16px;text-align:center;color:var(--gris);font-size:14px;line-height:1.5}
+
+  .ficha-wrap{padding:12px 16px;display:flex;flex-direction:column;gap:10px}
+  .volver{display:flex;align-items:center;gap:4px;background:none;border:0;color:var(--naranja-txt);font-weight:600;font-size:14px;min-height:44px;cursor:pointer;padding:0}
+  .card{background:#fff;border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+  .card h2{margin:0;font-size:13px;font-weight:700;color:var(--naranja-txt);letter-spacing:.04em}
+  .card h2.gris{color:var(--gris)}
+  .f-cab{display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .f-cta{font-family:Montserrat,sans-serif;font-weight:800;font-size:22px}
+  .f-tit{font-size:15px;font-weight:600}
+  .saldo{border-radius:10px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .saldo .et{font-size:12px;font-weight:600}
+  .saldo .val{font-family:Montserrat,sans-serif;font-weight:800;font-size:28px}
+  .saldo .mes{text-align:right}
+  .saldo .mes b{font-family:Montserrat,sans-serif;font-weight:800;font-size:22px;display:block}
+  .saldo .mes span{font-size:12px}
+  .rejilla{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 12px;font-size:13px}
+  .rejilla .e{color:var(--gris)} .rejilla .v{text-align:right;font-weight:500}
+  .rejilla .v.b{font-weight:600}
+  .rel{display:flex;gap:8px;flex-wrap:wrap}
+  .rel button{flex:1 1 160px;min-height:48px}
+  .placeholder{background:#fff;border-radius:14px;padding:48px 24px;text-align:center;color:var(--gris);margin:16px}
+
+  footer.pie{text-align:center;font-size:12px;color:var(--gris);padding:14px 16px 20px}
+  .cargando{position:fixed;inset:0;background:rgba(255,255,255,.55);display:flex;align-items:center;justify-content:center;z-index:50}
+  .spin{width:44px;height:44px;border:4px solid #F2D2B0;border-top-color:var(--naranja);border-radius:50%;animation:g 0.8s linear infinite}
+  @keyframes g{to{transform:rotate(360deg)}}
+
+  /* Impresión / PDF: solo la ficha */
+  @media print{
+    @page{size:letter;margin:14mm}
+    html,body{background:#fff}
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    header.barra,.panel-buscar,footer.pie,.volver,.ficha-acciones,.rel,.placeholder,#vLogin,#vClave,.cargando{display:none !important}
+    .app .panel-ficha,.app.ver-ficha .panel-ficha{display:block !important}
+    .contenedor{display:block;padding:0;max-width:none}
+    .ficha-wrap{padding:0;gap:8px}
+    .card{box-shadow:none;border:1px solid #DDD;break-inside:avoid}
+    .solo-impresion{display:block !important}
+    .imp-cab{display:flex !important;align-items:center;justify-content:space-between;border-bottom:3px solid var(--naranja);padding-bottom:8px;margin-bottom:10px}
+    .imp-cab img{height:56px}
+    .imp-cab .t{text-align:right}
+    .imp-cab .t b{font-family:Montserrat,sans-serif;font-size:16px;color:var(--gris-osc);display:block}
+    .imp-cab .t span{font-size:11px;color:var(--gris)}
+    .imp-pie{font-size:10.5px;color:var(--gris);border-top:1px solid #DDD;padding-top:8px;margin-top:6px;line-height:1.5}
+  }
+
+  /* Celular: una pantalla a la vez */
+  @media (max-width: 899px){
+    .contenedor{display:block}
+    .app.ver-ficha .panel-buscar{display:none}
+    .app:not(.ver-ficha) .panel-ficha{display:none}
+  }
+  /* PC: buscador y ficha lado a lado */
+  @media (min-width: 900px){
+    .solo-pc{display:inline}
+    .solo-cel{display:none !important}
+    .contenedor{padding:20px 24px}
+    .buscador{border-radius:14px}
+    .resumen,.lista{padding-left:0;padding-right:0}
+    .aviso-lim{margin-left:0;margin-right:0}
+    .ficha-wrap{padding:0}
+    .placeholder{margin:0}
+    .placeholder.solo-pc{display:block}
+    .panel-buscar{position:sticky;top:90px;max-height:calc(100vh - 110px);overflow:auto;padding-bottom:12px}
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ ACCESO ============ -->
+<div id="vLogin" class="acceso">
+  <form class="acceso-caja" id="fLogin" autocomplete="on">
+    <img src="logo.jpg" alt="Agua Potable Lagos de Moreno">
+    <div>
+      <h1>Consulta de padrón</h1>
+      <p class="sub">Acceso exclusivo para personal autorizado</p>
+    </div>
+    <div class="campo"><label for="lUsuario">Usuario</label><input id="lUsuario" autocomplete="username" autocapitalize="none" required></div>
+    <div class="campo"><label for="lClave">Contraseña</label><input id="lClave" type="password" autocomplete="current-password" required></div>
+    <div id="lMsg" class="msg err oculto" role="alert"></div>
+    <button class="btn" type="submit" id="lBtn">Entrar</button>
+    <p class="nota">¿Olvidaste tu contraseña? Solicita el restablecimiento al administrador de la app.</p>
+  </form>
+</div>
+
+<!-- ============ CAMBIO DE CONTRASEÑA ============ -->
+<div id="vClave" class="acceso oculto">
+  <form class="acceso-caja" id="fClave">
+    <img src="logo.jpg" alt="Agua Potable Lagos de Moreno">
+    <div>
+      <h1>Cambia tu contraseña</h1>
+      <p class="sub" id="cSub">Por seguridad, crea una contraseña personal de al menos 8 caracteres.</p>
+    </div>
+    <div class="campo"><label for="cActual">Contraseña actual</label><input id="cActual" type="password" autocomplete="current-password" required></div>
+    <div class="campo"><label for="cNueva">Nueva contraseña</label><input id="cNueva" type="password" autocomplete="new-password" minlength="8" required></div>
+    <div class="campo"><label for="cRepite">Repite la nueva contraseña</label><input id="cRepite" type="password" autocomplete="new-password" minlength="8" required></div>
+    <div id="cMsg" class="msg err oculto" role="alert"></div>
+    <button class="btn" type="submit">Guardar contraseña</button>
+    <button class="btn-sec" type="button" id="cCancelar">Cancelar</button>
+  </form>
+</div>
+
+<!-- ============ APP ============ -->
+<div id="vApp" class="app oculto">
+  <header class="barra">
+    <div class="barra-in">
+      <div style="display:flex;align-items:center">
+        <img src="logo.jpg" alt="Agua Potable Lagos de Moreno">
+        <span class="titulo mont solo-pc">Consulta de padrón</span>
+      </div>
+      <div class="der">
+        <span class="solo-pc" id="hFecha"></span>
+        <button class="avatar" id="btnAvatar" aria-label="Menú de usuario" aria-expanded="false"></button>
+      </div>
+    </div>
+    <div class="menu-usuario oculto" id="menuUsuario">
+      <div class="nom" id="mNombre"></div>
+      <button type="button" id="mClave">Cambiar contraseña</button>
+      <button type="button" id="mSalir">Cerrar sesión</button>
+    </div>
+  </header>
+
+  <div class="contenedor">
+    <section class="panel-buscar">
+      <form class="buscador" id="fBuscar">
+        <h1 class="solo-cel">Consulta de padrón</h1>
+        <div class="tabs" role="group" aria-label="Tipo de búsqueda">
+          <button type="button" data-modo="TODO" aria-pressed="true">Todo</button>
+          <button type="button" data-modo="CUENTA" aria-pressed="false">Cuenta</button>
+          <button type="button" data-modo="NOMBRE" aria-pressed="false">Nombre</button>
+          <button type="button" data-modo="DOMICILIO" aria-pressed="false">Domicilio</button>
+        </div>
+        <div class="fila-busq">
+          <label for="q" class="sr">Buscar</label>
+          <input id="q" autocomplete="off" placeholder="Cuenta, nombre o domicilio" enterkeyhint="search">
+          <button class="btn-lupa" type="submit" aria-label="Buscar">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+          </button>
+        </div>
+        <div class="fila-ayuda">
+          <p class="ayuda" id="ayuda">Palabras en cualquier orden · sin importar acentos</p>
+          <button class="btn-nueva" type="button" id="btnLimpiar">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
+            Limpiar formulario
+          </button>
+        </div>
+      </form>
+      <div id="resumen" class="resumen oculto"><b id="rTotal"></b><span id="rSub"></span></div>
+      <div id="avisoLim" class="aviso-lim oculto"></div>
+      <div id="lista" class="lista"></div>
+    </section>
+
+    <section class="panel-ficha">
+      <div id="placeholder" class="placeholder solo-pc">Busca y selecciona una cuenta para ver su ficha.</div>
+      <div id="ficha" class="ficha-wrap oculto"></div>
+    </section>
+  </div>
+
+  <footer class="pie" id="pie"></footer>
+</div>
+
+<div id="cargando" class="cargando oculto" aria-live="polite"><div class="spin" aria-label="Cargando"></div></div>
+
+<script src="config.js"></script>
+<script>
+if ('serviceWorker' in navigator) { window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); }); }
+(function(){
+  var LOGO = 'logo.jpg';
+  var S = { token: null, nombre: '', modo: 'TODO', cuentaSel: null, ultimaFicha: null };
+  var CLAVE_LS = 'padron_lm_token';
+  var $ = function(id){ return document.getElementById(id); };
+  var moneda = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' });
+
+  // ---------- utilidades ----------
+  function guardarToken(t){ S.token = t; try { t ? localStorage.setItem(CLAVE_LS, t) : localStorage.removeItem(CLAVE_LS); } catch(e){} }
+  function leerToken(){ try { return localStorage.getItem(CLAVE_LS); } catch(e){ return null; } }
+  function cargando(v){ $('cargando').classList.toggle('oculto', !v); }
+  function mostrar(vista){ ['vLogin','vClave','vApp'].forEach(function(v){ $(v).classList.toggle('oculto', v !== vista); }); window.scrollTo(0,0); }
+  function el(tag, cls, txt){ var e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; }
+  function cap(s){ s = String(s || '').toLowerCase(); return s.replace(/(^|[\s.(])([a-záéíóúñ])/g, function(m,a,b){ return a + b.toUpperCase(); }); }
+  function msg(id, texto, tipo){ var m = $(id); m.textContent = texto; m.className = 'msg ' + (tipo || 'err'); m.classList.toggle('oculto', !texto); }
+  function iniciales(n){ var p = String(n).trim().split(/\s+/); return ((p[0]||'')[0] || '') + ((p[1]||'')[0] || ''); }
+
+  function llamar(fn, args, ok, opciones){
+    opciones = opciones || {};
+    if (!opciones.silencio) cargando(true);
+    function fallo(m){
+      cargando(false);
+      if (String(m).indexOf('SESION_EXPIRADA') !== -1) { guardarToken(null); mostrar('vLogin'); msg('lMsg', 'Tu sesión expiró. Vuelve a entrar.'); return; }
+      if (opciones.error) opciones.error(m); else alert(m);
+    }
+    if (!window.API_URL || window.API_URL.indexOf('/exec') === -1) { fallo('Falta configurar la dirección del servidor (API_URL en config.js).'); return; }
+    fetch(window.API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ accion: fn, args: args })
+    })
+      .then(function(resp){ if (!resp.ok) throw new Error('HTTP ' + resp.status); return resp.json(); })
+      .then(function(res){
+        if (res && res.error) { fallo(res.error); return; }
+        cargando(false);
+        ok(res ? res.data : null);
+      })
+      .catch(function(e){ fallo('No se pudo conectar con el servidor. Revisa tu conexión a internet e intenta de nuevo.'); });
+  }
+
+  // Estatus → etiqueta y color
+  function estatus(c){
+    var p = (c.estadoPadron || '').toUpperCase(), s = (c.situacion || '').toUpperCase();
+    if (p === 'CANCELADO' || p === 'BAJA DEFINITIVA' || p === 'INACTIVO') return { t: cap(p), c: 'c-gris' };
+    if (s === 'SIN TOMA') return { t: 'Sin toma', c: 'c-gris' };
+    if (s.indexOf('SUSP') === 0) return { t: 'Suspensión temporal', c: 'c-gris' };
+    if (s.indexOf('VALVULA') === 0) return { t: 'Válvula limitada', c: 'c-amb' };
+    if (s === 'NOTIFICADO') return { t: 'Notificado', c: 'c-ama' };
+    if (s === 'INDEFINIDO') return { t: 'Indefinido', c: 'c-gris' };
+    if (c.saldo > 0) return { t: 'Con adeudo', c: 'c-rojo' };
+    if (c.saldo < 0) return { t: 'Saldo a favor', c: 'c-azul' };
+    return { t: 'Al corriente', c: 'c-verde' };
+  }
+  function colorSaldo(v){ return v > 0 ? 'rojo' : v < 0 ? 'azul' : 'verde'; }
+  function fechaPie(f){ var t = f ? 'Datos actualizados al ' + f + ' h' : 'Sin datos cargados todavía'; $('pie').textContent = t; $('hFecha').textContent = f ? 'Datos al ' + f + ' h' : ''; }
+
+  // ---------- acceso ----------
+  $('fLogin').addEventListener('submit', function(ev){
+    ev.preventDefault();
+    msg('lMsg', '');
+    llamar('login', [$('lUsuario').value, $('lClave').value], function(r){
+      if (!r.ok) { msg('lMsg', r.mensaje); return; }
+      $('lClave').value = '';
+      guardarToken(r.token);
+      entrar(r);
+    });
+  });
+
+  function entrar(r){
+    S.nombre = r.nombre;
+    $('btnAvatar').textContent = iniciales(r.nombre).toUpperCase();
+    $('mNombre').textContent = r.nombre;
+    fechaPie(r.actualizado);
+    if (r.debeCambiar) { abrirCambioClave(true); return; }
+    mostrar('vApp');
+    $('q').focus();
+  }
+
+  function abrirCambioClave(obligatorio){
+    $('fClave').reset(); msg('cMsg', '');
+    $('cSub').textContent = obligatorio
+      ? 'Es tu primer acceso o se restableció tu contraseña. Crea una contraseña personal de al menos 8 caracteres.'
+      : 'Crea una nueva contraseña de al menos 8 caracteres.';
+    $('cCancelar').classList.toggle('oculto', !!obligatorio);
+    mostrar('vClave');
+  }
+
+  $('fClave').addEventListener('submit', function(ev){
+    ev.preventDefault();
+    if ($('cNueva').value !== $('cRepite').value) { msg('cMsg', 'Las contraseñas nuevas no coinciden.'); return; }
+    llamar('cambiarClave', [S.token, $('cActual').value, $('cNueva').value], function(r){
+      if (!r.ok) { msg('cMsg', r.mensaje); return; }
+      mostrar('vApp');
+    });
+  });
+  $('cCancelar').addEventListener('click', function(){ mostrar('vApp'); });
+
+  // ---------- menú de usuario ----------
+  $('btnAvatar').addEventListener('click', function(){
+    var m = $('menuUsuario'), abierto = m.classList.toggle('oculto') === false;
+    this.setAttribute('aria-expanded', abierto);
+  });
+  document.addEventListener('click', function(e){
+    if (!e.target.closest('#menuUsuario') && e.target.id !== 'btnAvatar') $('menuUsuario').classList.add('oculto');
+  });
+  $('mClave').addEventListener('click', function(){ $('menuUsuario').classList.add('oculto'); abrirCambioClave(false); });
+  $('mSalir').addEventListener('click', function(){
+    $('menuUsuario').classList.add('oculto');
+    var t = S.token; guardarToken(null);
+    llamar('logout', [t], function(){}, { silencio: true, error: function(){} });
+    $('lista').innerHTML = ''; $('ficha').classList.add('oculto'); $('resumen').classList.add('oculto'); $('q').value = '';
+    mostrar('vLogin');
+  });
+
+  // ---------- búsqueda ----------
+  var AYUDAS = {
+    TODO: ['Cuenta, nombre o domicilio', 'Palabras en cualquier orden · sin importar acentos'],
+    CUENTA: ['Número de cuenta', 'Número exacto de la cuenta (Inmueble)'],
+    NOMBRE: ['Nombre o razón social', 'Puedes escribir solo parte del nombre, en cualquier orden'],
+    DOMICILIO: ['Calle y número', 'Calle y número; agrega la colonia para afinar']
+  };
+  function seleccionarModo(modo, sinFoco){
+    S.modo = modo;
+    Array.prototype.forEach.call(document.querySelectorAll('.tabs button'), function(x){ x.setAttribute('aria-pressed', x.getAttribute('data-modo') === modo); });
+    $('q').placeholder = AYUDAS[modo][0];
+    $('ayuda').textContent = AYUDAS[modo][1];
+    $('q').setAttribute('inputmode', modo === 'CUENTA' ? 'numeric' : 'text');
+    if (!sinFoco) $('q').focus();
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('.tabs button'), function(b){
+    b.addEventListener('click', function(){ seleccionarModo(b.getAttribute('data-modo')); });
+  });
+
+  $('fBuscar').addEventListener('submit', function(ev){
+    ev.preventDefault();
+    var texto = $('q').value.trim();
+    if (texto.length < (S.modo === 'CUENTA' ? 1 : 2)) { $('q').focus(); return; }
+    $('q').blur();
+    llamar('buscar', [S.token, S.modo, texto], function(r){
+      if (r.error) { alert(r.error); return; }
+      fechaPie(r.actualizado);
+      if (r.modo && r.modo !== S.modo) seleccionarModo(r.modo, true);
+      if (S.modo === 'CUENTA' && r.total === 1) { pintarResultados(r, 'Cuenta encontrada'); abrirFicha(r.resultados[0].cuenta); return; }
+      pintarResultados(r);
+      if (r.aviso) { $('avisoLim').textContent = r.aviso + (r.total > r.resultados.length ? ' Se muestran las primeras ' + r.resultados.length + '.' : ''); $('avisoLim').classList.remove('oculto'); }
+    });
+  });
+
+  function limpiarFicha(){
+    S.cuentaSel = null;
+    $('ficha').innerHTML = ''; $('ficha').classList.add('oculto');
+    $('placeholder').style.display = '';
+  }
+
+  $('btnLimpiar').addEventListener('click', function(){
+    $('q').value = '';
+    $('lista').innerHTML = '';
+    $('resumen').classList.add('oculto');
+    $('avisoLim').classList.add('oculto');
+    limpiarFicha();
+    $('vApp').classList.remove('ver-ficha');
+    seleccionarModo('TODO');
+  });
+
+  function dosD(n){ return ('0' + n).slice(-2); }
+  function ahoraTxt(){ var d = new Date(); return dosD(d.getDate()) + '/' + dosD(d.getMonth() + 1) + '/' + d.getFullYear() + ' ' + dosD(d.getHours()) + ':' + dosD(d.getMinutes()); }
+
+  function imprimirFicha(cuenta){
+    $('impFecha').textContent = ahoraTxt();
+    var tituloPrevio = document.title;
+    document.title = 'Cuenta_' + cuenta + '_Agua_Potable_Lagos';
+    setTimeout(function(){ window.print(); document.title = tituloPrevio; }, 50);
+  }
+
+  function pintarResultados(r, titulo, conservarFicha){
+    if (!conservarFicha) limpiarFicha();
+    var lista = $('lista'); lista.innerHTML = '';
+    $('resumen').classList.remove('oculto');
+    $('rTotal').textContent = titulo || (r.total === 1 ? '1 cuenta encontrada' : r.total.toLocaleString('es-MX') + ' cuentas encontradas');
+    $('rSub').textContent = r.total > 1 ? 'Elige la cuenta' : '';
+    var lim = r.total > r.resultados.length;
+    $('avisoLim').classList.toggle('oculto', !lim);
+    if (lim) $('avisoLim').textContent = 'Se muestran las primeras ' + r.resultados.length + '. Escribe más datos para afinar la búsqueda.';
+    if (!r.resultados.length) {
+      lista.appendChild(el('div', 'vacio', 'No se encontraron cuentas. Revisa la escritura o prueba con otra pestaña de búsqueda.'));
+      return;
+    }
+    if (S.modo === 'DOMICILIO' && !titulo) pintarGrupos(r.resultados); else r.resultados.forEach(function(c){ lista.appendChild(tarjeta(c)); });
+    if (window.matchMedia('(max-width: 899px)').matches) $('vApp').classList.remove('ver-ficha');
+  }
+
+  function tarjeta(c){
+    var b = el('button', 'tarjeta'); b.type = 'button'; b.setAttribute('data-cuenta', c.cuenta);
+    if (c.cuenta === S.cuentaSel) b.classList.add('sel');
+    var top = el('div', 'top'); var e = estatus(c);
+    top.appendChild(el('span', 'cta', 'Cuenta ' + c.cuenta));
+    top.appendChild(el('span', 'chip ' + e.c, e.t));
+    b.appendChild(top);
+    b.appendChild(el('span', 'tit', c.titular || 'Sin nombre registrado'));
+    b.appendChild(el('span', 'dom', c.domicilio || 'Sin domicilio registrado'));
+    b.appendChild(el('span', 'monto t-' + colorSaldo(c.saldo), moneda.format(c.saldo)));
+    b.addEventListener('click', function(){ abrirFicha(c.cuenta); });
+    return b;
+  }
+
+  function pintarGrupos(res){
+    var grupos = {}, orden = [];
+    res.forEach(function(c){ if (!grupos[c.domClave]) { grupos[c.domClave] = []; orden.push(c.domClave); } grupos[c.domClave].push(c); });
+    orden.forEach(function(k){
+      var g = grupos[k], p = g[0];
+      var caja = el('div', 'grupo');
+      var cab = el('div', 'grupo-cab');
+      cab.appendChild(el('b', null, [p.calle, p.numero].filter(Boolean).join(' ') + (p.colonia ? ' · ' + p.colonia : '')));
+      var titulares = {}; g.forEach(function(c){ titulares[c.titClave] = 1; });
+      var nt = Object.keys(titulares).length;
+      cab.appendChild(el('span', null, g.length + (g.length === 1 ? ' cuenta' : ' cuentas') + ' · ' + nt + (nt === 1 ? ' titular' : ' titulares')));
+      caja.appendChild(cab);
+      g.forEach(function(c){
+        var f = el('button', 'grupo-fila'); f.type = 'button';
+        var izq = el('div'); izq.style.display = 'flex'; izq.style.flexDirection = 'column'; izq.style.gap = '3px';
+        izq.appendChild(el('span', 'tit', c.titular || 'Sin nombre registrado'));
+        izq.appendChild(el('span', 'dom', 'Cuenta ' + c.cuenta + [c.bis, c.interior].filter(Boolean).map(function(x){ return ' · ' + x; }).join('') + ' · ' + cap(c.servicio)));
+        f.appendChild(izq);
+        var e = estatus(c);
+        f.appendChild(el('span', 'chip ' + e.c, c.saldo > 0 ? moneda.format(c.saldo) : e.t));
+        f.addEventListener('click', function(){ abrirFicha(c.cuenta); });
+        caja.appendChild(f);
+      });
+      $('lista').appendChild(caja);
+    });
+  }
+
+  // ---------- ficha ----------
+  function abrirFicha(cuenta){
+    llamar('ficha', [S.token, cuenta], function(r){
+      if (!r.cuentas.length) { alert('No se encontró la cuenta ' + cuenta + '.'); return; }
+      S.cuentaSel = cuenta;
+      Array.prototype.forEach.call(document.querySelectorAll('.tarjeta'), function(t){ t.classList.toggle('sel', t.getAttribute('data-cuenta') === cuenta); });
+      pintarFicha(r);
+      $('vApp').classList.add('ver-ficha');
+      window.scrollTo(0,0);
+    });
+  }
+
+  function par(rej, e, v, negrita){ rej.appendChild(el('span', 'e', e)); rej.appendChild(el('span', 'v' + (negrita ? ' b' : ''), v || '—')); }
+
+  function pintarFicha(r){
+    var f = $('ficha'); f.innerHTML = ''; f.classList.remove('oculto');
+    var ph = $('placeholder'); ph.style.display = 'none';
+
+    var volver = el('button', 'volver solo-cel'); volver.type = 'button';
+    volver.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>';
+    volver.appendChild(document.createTextNode('Resultados'));
+    volver.addEventListener('click', function(){ $('vApp').classList.remove('ver-ficha'); });
+    var acc = el('div', 'ficha-acciones');
+    acc.appendChild(volver);
+    var imp = el('button', 'btn-imprimir'); imp.type = 'button';
+    imp.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V3h12v6"/><rect x="6" y="14" width="12" height="7"/><path d="M6 18H4a1 1 0 0 1-1-1v-6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v6a1 1 0 0 1-1 1h-2"/></svg>';
+    imp.appendChild(document.createTextNode('Imprimir / PDF'));
+    var cuentaImp = r.cuentas[0].cuenta;
+    imp.addEventListener('click', function(){ imprimirFicha(cuentaImp); });
+    acc.appendChild(imp);
+    f.appendChild(acc);
+
+    // Encabezado y pie que solo aparecen al imprimir
+    var ic = el('div', 'imp-cab solo-impresion');
+    var il = el('img'); il.src = LOGO; il.alt = 'Agua Potable Lagos de Moreno'; ic.appendChild(il);
+    var it = el('div', 't'); it.appendChild(el('b', null, 'Estado de cuenta informativo'));
+    it.appendChild(el('span', null, 'Agua Potable y Alcantarillado · Lagos de Moreno'));
+    ic.appendChild(it); f.appendChild(ic);
+
+    r.cuentas.forEach(function(c, idx){
+      if (idx > 0) f.appendChild(el('div', 'aviso-lim', 'La cuenta ' + c.cuenta + ' aparece más de una vez en el padrón. Registro ' + (idx + 1) + ':'));
+      var e = estatus(c), col = colorSaldo(c.saldo);
+
+      // Encabezado + saldo
+      var k = el('section', 'card');
+      var cab = el('div', 'f-cab');
+      cab.appendChild(el('span', 'f-cta', 'Cuenta ' + c.cuenta));
+      cab.appendChild(el('span', 'chip ' + e.c, e.t));
+      k.appendChild(cab);
+      k.appendChild(el('span', 'f-tit', c.titular || 'Sin nombre registrado'));
+      var s = el('div', 'saldo c-' + col);
+      var izq = el('div'); izq.style.display = 'flex'; izq.style.flexDirection = 'column'; izq.style.gap = '2px';
+      izq.appendChild(el('span', 'et', c.saldo < 0 ? 'SALDO A FAVOR' : 'SALDO TOTAL'));
+      izq.appendChild(el('span', 'val', moneda.format(Math.abs(c.saldo))));
+      s.appendChild(izq);
+      var der = el('div', 'mes'); der.appendChild(el('b', null, String(c.meses))); der.appendChild(el('span', null, c.meses === 1 ? 'mes de adeudo' : 'meses de adeudo'));
+      s.appendChild(der);
+      k.appendChild(s);
+      var rej = el('div', 'rejilla');
+      par(rej, 'Adeudo anterior', moneda.format(c.adeudoAnterior), true);
+      par(rej, 'Cargos actuales', moneda.format(c.cargos), true);
+      par(rej, 'Créditos actuales', moneda.format(c.creditos), true);
+      par(rej, 'Facturado hasta', c.facturado, true);
+      k.appendChild(rej);
+      f.appendChild(k);
+
+      // Domicilio
+      var d = el('section', 'card'); d.appendChild(el('h2', null, 'DOMICILIO'));
+      d.appendChild(el('span', 'f-tit', [c.calle, c.numero, c.bis, c.interior].filter(Boolean).join(' ') || 'Sin domicilio registrado'));
+      var rd = el('div', 'rejilla'); par(rd, 'Colonia', cap(c.colonia)); par(rd, 'Ruta', cap(c.ruta)); d.appendChild(rd);
+      f.appendChild(d);
+
+      // Servicio
+      var sv = el('section', 'card'); sv.appendChild(el('h2', null, 'SERVICIO'));
+      var rs = el('div', 'rejilla');
+      par(rs, 'Tipo', cap(c.servicio)); par(rs, 'Tarifa (nivel)', cap(c.nivel)); par(rs, 'Giro', cap(c.giro));
+      par(rs, 'Estado en padrón', cap(c.estadoPadron)); par(rs, 'Situación', cap(c.situacion));
+      par(rs, 'Estado de la toma', cap(c.estadoToma)); par(rs, 'Fecha de alta', c.alta);
+      sv.appendChild(rs); f.appendChild(sv);
+
+      // Referencia (solo si hay cuenta alterna)
+      if (c.alterna) {
+        var rf = el('section', 'card'); var h = el('h2', 'gris', 'REFERENCIA'); rf.appendChild(h);
+        var rr = el('div', 'rejilla'); par(rr, 'Cuenta alterna', c.alterna); rf.appendChild(rr); f.appendChild(rf);
+      }
+    });
+
+    // Pie de impresión
+    var pie = el('div', 'imp-pie solo-impresion');
+    pie.appendChild(document.createTextNode('Consulta realizada el '));
+    var sf = el('span'); sf.id = 'impFecha'; sf.textContent = ahoraTxt(); pie.appendChild(sf);
+    pie.appendChild(document.createTextNode(' por ' + S.nombre + '. Datos del padrón actualizados al ' + (r.actualizado || '—') + ' h.'));
+    pie.appendChild(el('br'));
+    pie.appendChild(document.createTextNode('Documento informativo: no es un comprobante de pago ni sustituye el recibo oficial. Para aclaraciones, acuda a las oficinas de Agua Potable y Alcantarillado de Lagos de Moreno.'));
+    f.appendChild(pie);
+
+    // Relacionadas
+    var c0 = r.cuentas[0];
+    if (r.otrasTitular > 0 || r.otrasDomicilio > 0) {
+      var rel = el('div', 'rel');
+      if (r.otrasTitular > 0) rel.appendChild(botonRel('Otras cuentas del titular (' + r.otrasTitular + ')', 'TITULAR', c0.titClave, 'Cuentas de ' + c0.titular));
+      if (r.otrasDomicilio > 0) rel.appendChild(botonRel('Otras cuentas en el domicilio (' + r.otrasDomicilio + ')', 'DOMICILIO', c0.domClave, 'Cuentas en ' + [c0.calle, c0.numero].join(' ')));
+      f.appendChild(rel);
+    }
+  }
+
+  function botonRel(txt, tipo, clave, titulo){
+    var b = el('button', 'btn-sec', txt); b.type = 'button';
+    b.addEventListener('click', function(){
+      llamar('relacionadas', [S.token, tipo, clave], function(r){
+        var modoPrevio = S.modo; S.modo = tipo === 'DOMICILIO' ? 'DOMICILIO' : 'NOMBRE';
+        pintarResultados(r, titulo + ' · ' + r.total, true);
+        S.modo = modoPrevio;
+        window.scrollTo(0,0);
+      });
+    });
+    return b;
+  }
+
+  // ---------- inicio ----------
+  var t = leerToken();
+  if (t) {
+    S.token = t;
+    llamar('estado', [t], function(r){ entrar(r); }, { error: function(){ guardarToken(null); mostrar('vLogin'); } });
+  } else {
+    mostrar('vLogin');
+  }
+})();
+</script>
+</body>
+</html>
