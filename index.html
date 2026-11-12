@@ -40,6 +40,10 @@
   .campo label{font-size:13px;font-weight:600;color:var(--gris-osc)}
   .campo input{height:48px;border:1.5px solid #9A9A9A;border-radius:10px;padding:0 14px;color:var(--texto);background:#fff}
   .campo input:focus,.campo textarea:focus{outline:none;border-color:var(--naranja);box-shadow:0 0 0 3px rgba(255,130,0,.2)}
+  .clave-wrap{position:relative;display:flex}
+  .clave-wrap input{flex:1;min-width:0;padding-right:54px}
+  .ojo{position:absolute;right:4px;top:50%;transform:translateY(-50%);width:44px;height:44px;border:0;background:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--gris);border-radius:8px}
+  .ojo:hover{background:var(--fondo)}
   .btn{height:50px;border:0;border-radius:10px;background:var(--naranja-osc);color:#fff;font-family:Montserrat,sans-serif;font-weight:700;font-size:16px;cursor:pointer}
   .btn:disabled{opacity:.6}
   .btn-sec{height:46px;border:1.5px solid var(--naranja-osc);border-radius:10px;background:#fff;color:var(--naranja-txt);font-weight:600;font-size:14px;cursor:pointer;padding:0 14px}
@@ -250,7 +254,7 @@
       <p class="sub">Acceso exclusivo para personal autorizado</p>
     </div>
     <div class="campo"><label for="lUsuario">Usuario</label><input id="lUsuario" autocomplete="username" autocapitalize="none" required></div>
-    <div class="campo"><label for="lClave">Contraseña</label><input id="lClave" type="password" autocomplete="current-password" required></div>
+    <div class="campo"><label for="lClave">Contraseña</label><div class="clave-wrap"><input id="lClave" type="password" autocomplete="current-password" required><button type="button" class="ojo" data-para="lClave" aria-label="Mostrar contraseña" aria-pressed="false"></button></div></div>
     <div id="lMsg" class="msg err oculto" role="alert"></div>
     <button class="btn" type="submit" id="lBtn">Entrar</button>
     <p class="nota">¿Olvidaste tu contraseña? Solicita el restablecimiento al administrador de la app.</p>
@@ -265,9 +269,9 @@
       <h1>Cambia tu contraseña</h1>
       <p class="sub" id="cSub">Por seguridad, crea una contraseña personal de al menos 8 caracteres.</p>
     </div>
-    <div class="campo"><label for="cActual">Contraseña actual</label><input id="cActual" type="password" autocomplete="current-password" required></div>
-    <div class="campo"><label for="cNueva">Nueva contraseña</label><input id="cNueva" type="password" autocomplete="new-password" minlength="8" required></div>
-    <div class="campo"><label for="cRepite">Repite la nueva contraseña</label><input id="cRepite" type="password" autocomplete="new-password" minlength="8" required></div>
+    <div class="campo"><label for="cActual">Contraseña actual</label><div class="clave-wrap"><input id="cActual" type="password" autocomplete="current-password" required><button type="button" class="ojo" data-para="cActual" aria-label="Mostrar contraseña" aria-pressed="false"></button></div></div>
+    <div class="campo"><label for="cNueva">Nueva contraseña</label><div class="clave-wrap"><input id="cNueva" type="password" autocomplete="new-password" minlength="8" required><button type="button" class="ojo" data-para="cNueva" aria-label="Mostrar contraseña" aria-pressed="false"></button></div></div>
+    <div class="campo"><label for="cRepite">Repite la nueva contraseña</label><div class="clave-wrap"><input id="cRepite" type="password" autocomplete="new-password" minlength="8" required><button type="button" class="ojo" data-para="cRepite" aria-label="Mostrar contraseña" aria-pressed="false"></button></div></div>
     <div id="cMsg" class="msg err oculto" role="alert"></div>
     <button class="btn" type="submit">Guardar contraseña</button>
     <button class="btn-sec" type="button" id="cCancelar">Cancelar</button>
@@ -407,7 +411,7 @@ if ('serviceWorker' in navigator) { window.addEventListener('load', function(){ 
   function guardarToken(t){ S.token = t; try { t ? localStorage.setItem(CLAVE_LS, t) : localStorage.removeItem(CLAVE_LS); } catch(e){} }
   function leerToken(){ try { return localStorage.getItem(CLAVE_LS); } catch(e){ return null; } }
   function cargando(v){ $('cargando').classList.toggle('oculto', !v); }
-  function mostrar(vista){ ['vLogin','vClave','vApp'].forEach(function(v){ $(v).classList.toggle('oculto', v !== vista); }); window.scrollTo(0,0); }
+  function mostrar(vista){ ['vLogin','vClave','vApp'].forEach(function(v){ $(v).classList.toggle('oculto', v !== vista); }); if (typeof ocultarClaves === 'function') ocultarClaves(); window.scrollTo(0,0); }
   function el(tag, cls, txt){ var e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; }
   function cap(s){ s = String(s || '').toLowerCase(); return s.replace(/(^|[\s.(])([a-záéíóúñ])/g, function(m,a,b){ return a + b.toUpperCase(); }); }
   function msg(id, texto, tipo){ var m = $(id); m.textContent = texto; m.className = 'msg ' + (tipo || 'err'); m.classList.toggle('oculto', !texto); }
@@ -460,6 +464,27 @@ if ('serviceWorker' in navigator) { window.addEventListener('load', function(){ 
   }
   function colorSaldo(v){ return v > 0 ? 'rojo' : v < 0 ? 'azul' : 'verde'; }
   function fechaPie(f){ var t = f ? 'Datos del padrón actualizados al ' + f + ' h' : 'Sin datos cargados todavía'; $('pie').textContent = t; $('hFecha').textContent = f ? 'Datos al ' + f + ' h' : ''; }
+
+  // ---------- mostrar / ocultar contraseña ----------
+  var OJO = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+  var OJO_NO = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18"/><path d="M10.6 5.1A10.9 10.9 0 0 1 12 5c6.5 0 10 7 10 7a17.6 17.6 0 0 1-3.2 4.2"/><path d="M6.6 6.6C3.8 8.4 2 12 2 12s3.5 7 10 7c1.9 0 3.5-.6 4.9-1.4"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>';
+  function ocultarClaves(){
+    Array.prototype.forEach.call(document.querySelectorAll('.ojo'), function(b){
+      $(b.getAttribute('data-para')).type = 'password';
+      b.innerHTML = OJO; b.setAttribute('aria-pressed', 'false'); b.setAttribute('aria-label', 'Mostrar contraseña');
+    });
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('.ojo'), function(b){
+    b.addEventListener('click', function(){
+      var inp = $(b.getAttribute('data-para')), ver = inp.type === 'password';
+      inp.type = ver ? 'text' : 'password';
+      b.innerHTML = ver ? OJO_NO : OJO;
+      b.setAttribute('aria-pressed', ver ? 'true' : 'false');
+      b.setAttribute('aria-label', ver ? 'Ocultar contraseña' : 'Mostrar contraseña');
+      inp.focus();
+    });
+  });
+  ocultarClaves();
 
   // ---------- acceso ----------
   $('fLogin').addEventListener('submit', function(ev){
