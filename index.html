@@ -192,6 +192,40 @@
   .botones .btn,.botones .btn-sec{flex:1;height:50px}
   .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--gris-osc);color:#fff;padding:12px 18px;border-radius:10px;font-size:14px;font-weight:600;z-index:60;box-shadow:0 4px 16px rgba(0,0,0,.25)}
 
+  /* ---------- Reporte semanal ---------- */
+  .reporte{min-height:100vh;background:var(--fondo)}
+  .rep-barra{position:sticky;top:0;z-index:5;background:#fff;border-bottom:4px solid var(--naranja);padding:10px 16px;display:flex;flex-wrap:wrap;gap:10px;align-items:flex-end;justify-content:space-between}
+  .rep-barra label{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--gris-osc);flex:1 1 220px;max-width:360px}
+  .rep-barra select{height:44px;border:1.5px solid #9A9A9A;border-radius:8px;padding:0 10px;background:#fff;font-size:15px}
+  .rep-hoja{background:#fff;max-width:880px;margin:16px auto;padding:28px 32px;box-shadow:0 1px 4px rgba(0,0,0,.12);border-radius:6px;font-size:12.5px;color:var(--texto)}
+  .rep-cab{display:flex;align-items:center;justify-content:space-between;gap:16px;border-bottom:3px solid var(--naranja);padding-bottom:10px;margin-bottom:14px}
+  .rep-cab img{height:58px}
+  .rep-cab .t{text-align:right}
+  .rep-cab .t b{font-family:Montserrat,sans-serif;font-size:18px;color:var(--gris-osc);display:block}
+  .rep-cab .t span{font-size:12px;color:var(--gris);display:block}
+  .rep-hoja h2{font-family:Montserrat,sans-serif;font-size:13px;font-weight:800;color:var(--naranja-txt);letter-spacing:.04em;margin:18px 0 8px;text-transform:uppercase}
+  .rep-hoja h3{font-size:12.5px;font-weight:700;color:var(--gris-osc);margin:12px 0 6px}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
+  .kpi{border:1px solid var(--linea);border-radius:8px;padding:8px 10px;break-inside:avoid}
+  .kpi b{font-family:Montserrat,sans-serif;font-size:22px;font-weight:800;display:block;line-height:1.1}
+  .kpi span{font-size:11px;color:var(--gris)}
+  .kpi.rojo b{color:var(--rojo)}
+  .rep-hoja table{width:100%;border-collapse:collapse;margin-top:6px;font-size:11.5px}
+  .rep-hoja th{background:var(--gris);color:#fff;text-align:left;font-weight:600;padding:5px 7px}
+  .rep-hoja td{border-bottom:1px solid var(--linea);padding:5px 7px;vertical-align:top}
+  .rep-hoja td.n,.rep-hoja th.n{text-align:right;white-space:nowrap}
+  .rep-hoja tr{break-inside:avoid}
+  .rep-hoja .sin{color:var(--gris);font-style:italic;margin:4px 0}
+  .rep-dos{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .rep-pie{margin-top:18px;border-top:1px solid #DDD;padding-top:8px;font-size:10.5px;color:var(--gris);line-height:1.5}
+  .t-rojo-b{color:var(--rojo);font-weight:600}
+  .graf{margin:6px 0 4px;break-inside:avoid}
+  .graf svg{width:100%;height:auto;display:block}
+  .graf .tit{font-size:12px;font-weight:700;color:var(--gris-osc);margin-bottom:2px}
+  .leyenda{display:flex;gap:16px;font-size:11px;color:var(--gris);margin:2px 0 4px}
+  .leyenda i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+  @media (max-width:640px){ .rep-hoja{padding:18px 14px;margin:8px} .rep-dos{grid-template-columns:1fr} .rep-hoja table{font-size:11px} }
+
   footer.pie{text-align:center;font-size:12px;color:var(--gris);padding:14px 16px 20px}
   .cargando{position:fixed;inset:0;background:rgba(255,255,255,.55);display:flex;align-items:center;justify-content:center;z-index:50}
   .spin{width:44px;height:44px;border:4px solid #F2D2B0;border-top-color:var(--naranja);border-radius:50%;animation:g 0.8s linear infinite}
@@ -202,7 +236,10 @@
     @page{size:letter;margin:14mm}
     html,body{background:#fff}
     *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
-    header.barra,.panel-buscar,footer.pie,.volver,.ficha-acciones,.rel,.placeholder,#vLogin,#vClave,.cargando,.valv,.modal,.toast,.no-imp{display:none !important}
+    header.barra,.panel-buscar,footer.pie,.volver,.ficha-acciones,.rel,.placeholder,#vLogin,#vClave,.cargando,.valv,.modal,.toast,.no-imp,.rep-barra{display:none !important}
+    .reporte{background:#fff;min-height:0}
+    .rep-hoja{box-shadow:none;margin:0;padding:0;max-width:none;border-radius:0;font-size:11.5px}
+    .rep-hoja th{background:#5F5F5F !important;color:#fff !important}
     .app .panel-ficha,.app.ver-ficha .panel-ficha{display:block !important}
     .contenedor{display:block;padding:0;max-width:none}
     .ficha-wrap{padding:0;gap:8px}
@@ -342,10 +379,16 @@
   <section id="secValv" class="valv oculto">
     <div class="valv-cab">
       <div><h1>Control de válvulas</h1><span class="hoy" id="vHoy"></span></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-left:auto">
+      <button class="btn-nueva oculto" type="button" id="vReporteBtn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 17h6"/></svg>
+        Reporte semanal (PDF)
+      </button>
       <button class="btn-nueva" type="button" id="vActualizar">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg>
         Actualizar
       </button>
+      </div>
     </div>
     <div class="tiles" id="vTiles"></div>
     <div class="filtros">
@@ -375,6 +418,8 @@
   <form class="modal-caja" id="fRep" novalidate>
     <div><h2 id="mTit"></h2><p class="ayuda" id="mSub"></p></div>
     <fieldset><legend>Acción realizada</legend><div id="mOpc" style="display:flex;flex-direction:column;gap:6px"></div></fieldset>
+    <div class="campo" id="mEquipoCampo"><label for="mEquipo">Equipo que realizó el trabajo</label>
+      <select id="mEquipo" required style="height:48px;border:1.5px solid #9A9A9A;border-radius:10px;padding:0 12px;background:#fff;font-size:16px;color:var(--texto)"></select></div>
     <div class="campo"><label for="mFecha">Fecha de ejecución</label><input type="date" id="mFecha" required></div>
     <div class="campo">
       <label for="mCom" id="mComL">Comentario (opcional)</label>
@@ -386,6 +431,16 @@
   </form>
 </div>
 
+<!-- ============ REPORTE SEMANAL ============ -->
+<div id="vReporte" class="reporte oculto">
+  <div class="rep-barra">
+    <button type="button" class="btn-sec" id="rVolver">← Volver a válvulas</button>
+    <label>Semana<select id="rSemana"></select></label>
+    <button type="button" class="btn" id="rImprimir" style="padding:0 20px">Imprimir / PDF</button>
+  </div>
+  <div class="rep-hoja" id="rHoja"></div>
+</div>
+
 <div id="toast" class="toast oculto" role="status"></div>
 <div id="cargando" class="cargando oculto" aria-live="polite"><div class="spin" aria-label="Cargando"></div></div>
 
@@ -394,7 +449,7 @@
 if ('serviceWorker' in navigator) { window.addEventListener('load', function(){ navigator.serviceWorker.register('sw.js').catch(function(){}); }); }
 (function(){
   var LOGO = 'logo.jpg';
-  var S = { token: null, nombre: '', rol: 'CONSULTA', sec: 'padron', modo: 'TODO', cuentaSel: null, ultimaFicha: null, valv: null, rep: null };
+  var S = { token: null, nombre: '', rol: 'CONSULTA', perm: {}, sec: 'padron', modo: 'TODO', cuentaSel: null, ultimaFicha: null, valv: null, rep: null };
   var CLAVE_LS = 'padron_lm_token';
   var $ = function(id){ return document.getElementById(id); };
   var moneda = new Intl.NumberFormat('es-MX', { style: 'currency', currency: 'MXN' });
@@ -411,7 +466,7 @@ if ('serviceWorker' in navigator) { window.addEventListener('load', function(){ 
   function guardarToken(t){ S.token = t; try { t ? localStorage.setItem(CLAVE_LS, t) : localStorage.removeItem(CLAVE_LS); } catch(e){} }
   function leerToken(){ try { return localStorage.getItem(CLAVE_LS); } catch(e){ return null; } }
   function cargando(v){ $('cargando').classList.toggle('oculto', !v); }
-  function mostrar(vista){ ['vLogin','vClave','vApp'].forEach(function(v){ $(v).classList.toggle('oculto', v !== vista); }); if (typeof ocultarClaves === 'function') ocultarClaves(); window.scrollTo(0,0); }
+  function mostrar(vista){ $('vReporte').classList.add('oculto'); ['vLogin','vClave','vApp'].forEach(function(v){ $(v).classList.toggle('oculto', v !== vista); }); if (typeof ocultarClaves === 'function') ocultarClaves(); window.scrollTo(0,0); }
   function el(tag, cls, txt){ var e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; }
   function cap(s){ s = String(s || '').toLowerCase(); return s.replace(/(^|[\s.(])([a-záéíóúñ])/g, function(m,a,b){ return a + b.toUpperCase(); }); }
   function msg(id, texto, tipo){ var m = $(id); m.textContent = texto; m.className = 'msg ' + (tipo || 'err'); m.classList.toggle('oculto', !texto); }
@@ -501,6 +556,7 @@ if ('serviceWorker' in navigator) { window.addEventListener('load', function(){ 
   function entrar(r){
     S.nombre = r.nombre;
     S.rol = r.rol || 'CONSULTA';
+    S.perm = r.permisos || { padron: S.rol !== 'CAMPO', valvulas: S.rol === 'ADMIN' || S.rol === 'CAMPO', reportar: S.rol === 'ADMIN' || S.rol === 'CAMPO', pdf: false };
     $('btnAvatar').textContent = iniciales(r.nombre).toUpperCase();
     $('mNombre').textContent = r.nombre;
     fechaPie(r.actualizado);
@@ -509,15 +565,16 @@ if ('serviceWorker' in navigator) { window.addEventListener('load', function(){ 
     configurarRol();
   }
 
-  // ADMIN: padrón y válvulas · CONSULTA: padrón · CAMPO: válvulas
+  // Permisos que manda el servidor según el rol: padron, valvulas, reportar, pdf
   function configurarRol(){
-    $('navSecc').classList.toggle('oculto', S.rol !== 'ADMIN');
-    irSeccion(S.rol === 'CAMPO' ? 'valv' : 'padron');
+    $('navSecc').classList.toggle('oculto', !(S.perm.padron && S.perm.valvulas));
+    $('vReporteBtn').classList.toggle('oculto', !S.perm.pdf);
+    irSeccion(S.perm.padron ? 'padron' : 'valv');
   }
 
   function irSeccion(sec){
-    if (sec === 'valv' && S.rol === 'CONSULTA') sec = 'padron';
-    if (sec === 'padron' && S.rol === 'CAMPO') sec = 'valv';
+    if (sec === 'valv' && !S.perm.valvulas) sec = 'padron';
+    if (sec === 'padron' && !S.perm.padron) sec = 'valv';
     S.sec = sec;
     var esV = sec === 'valv';
     $('secPadron').classList.toggle('oculto', esV);
@@ -924,10 +981,10 @@ if ('serviceWorker' in navigator) { window.addEventListener('load', function(){ 
       var fila = el('div', 'h-fila');
       var tx = el('div', 'tx');
       tx.appendChild(el('b', null, 'Cuenta ' + h.cuenta + ' · ' + h.accTxt));
-      tx.appendChild(el('span', null, (h.dom || 'Sin domicilio') + ' · ' + (r.instrucciones[h.instr] || '') + ' · ejecutado el ' + h.fe));
+      tx.appendChild(el('span', null, (h.dom || 'Sin domicilio') + ' · ' + (r.instrucciones[h.instr] || '') + ' · ejecutado el ' + h.fe + (h.equipo ? ' · ' + h.equipo : '')));
       if (h.com) tx.appendChild(el('span', null, h.com));
       fila.appendChild(tx);
-      if (h.ultima) {
+      if (h.ultima && S.perm.reportar) {
         var b = el('button', 'btn-sec', 'Corregir'); b.type = 'button';
         b.addEventListener('click', function(){ abrirReporte('corregir', h); });
         fila.appendChild(b);
@@ -948,9 +1005,11 @@ if ('serviceWorker' in navigator) { window.addEventListener('load', function(){ 
     if (x.intentos) d.appendChild(el('div', 'v-alerta c-amb', 'No localizado · ' + x.intentos + (x.intentos === 1 ? ' intento' : ' intentos') + ' · último ' + x.ultimoIntento + (x.ultimoNE ? ' (' + x.ultimoNE.toLowerCase() + ')' : '')));
     if (x.yaPago) d.appendChild(el('div', 'v-alerta c-verde', 'Ya pagó: verificar antes de colocar'));
     if (x.com) d.appendChild(el('span', 'com', x.com));
-    var b = el('button', 'btn-rep', 'Reportar'); b.type = 'button';
-    b.addEventListener('click', function(){ abrirReporte('reportar', x); });
-    d.appendChild(b);
+    if (S.perm.reportar) {
+      var b = el('button', 'btn-rep', 'Reportar'); b.type = 'button';
+      b.addEventListener('click', function(){ abrirReporte('reportar', x); });
+      d.appendChild(b);
+    }
     return d;
   }
 
@@ -970,6 +1029,12 @@ if ('serviceWorker' in navigator) { window.addEventListener('load', function(){ 
       l.appendChild(i); l.appendChild(document.createTextNode(a.t));
       opc.appendChild(l);
     });
+    var hayEq = (r.equipos || []).length > 0;
+    $('mEquipoCampo').classList.toggle('oculto', !hayEq);
+    var se = $('mEquipo'); se.innerHTML = '';
+    var o0 = el('option', null, 'Elige el equipo'); o0.value = ''; se.appendChild(o0);
+    (r.equipos || []).forEach(function(e){ var o = el('option', null, e); o.value = e; se.appendChild(o); });
+    se.value = modo === 'corregir' && x.equipo && (r.equipos || []).indexOf(x.equipo) !== -1 ? x.equipo : '';
     $('mFecha').max = r.hoyIso;
     $('mFecha').min = x.fiIso || '';
     $('mFecha').value = modo === 'corregir' ? (x.feIso || r.hoyIso) : r.hoyIso;
@@ -999,14 +1064,15 @@ if ('serviceWorker' in navigator) { window.addEventListener('load', function(){ 
   $('fRep').addEventListener('submit', function(ev){
     ev.preventDefault();
     if (!S.rep) return;
-    var acc = accionElegida(), fecha = $('mFecha').value, com = $('mCom').value.trim();
+    var acc = accionElegida(), fecha = $('mFecha').value, com = $('mCom').value.trim(), equipo = $('mEquipo').value;
     if (!acc) { msg('mMsg', 'Elige la acción realizada.'); return; }
+    if (!equipo && (S.valv.equipos || []).length) { msg('mMsg', 'Elige el equipo que realizó el trabajo.'); return; }
     if (!fecha) { msg('mMsg', 'Indica la fecha de ejecución.'); return; }
     if (fecha > S.valv.hoyIso) { msg('mMsg', 'La fecha de ejecución no puede ser futura.'); return; }
     if (S.rep.x.fiIso && fecha < S.rep.x.fiIso) { msg('mMsg', 'La fecha de ejecución no puede ser anterior a la fecha de instrucción.'); return; }
     if (!com && S.valv.obligatorio.indexOf(acc) !== -1) { msg('mMsg', 'Para esta acción el comentario es obligatorio: explica qué pasó.'); return; }
     var fn = S.rep.modo === 'corregir' ? 'corregirValvula' : 'reportarValvula';
-    llamar(fn, [S.token, S.rep.x.id, acc, fecha, com], function(res){
+    llamar(fn, [S.token, S.rep.x.id, acc, fecha, com, equipo], function(res){
       if (!res.ok) { msg('mMsg', res.mensaje); return; }
       var corr = S.rep.modo === 'corregir';
       cerrarModal();
@@ -1014,6 +1080,192 @@ if ('serviceWorker' in navigator) { window.addEventListener('load', function(){ 
       cargarValvulas();
     }, { error: function(m){ msg('mMsg', m); } });
   });
+
+  // ---------- reporte semanal ----------
+  function isoLocal(d){ return d.getFullYear() + '-' + dosD(d.getMonth() + 1) + '-' + dosD(d.getDate()); }
+  function llenarSemanas(){
+    var sel = $('rSemana'); if (sel.options.length) return;
+    var d = new Date(); d.setHours(12, 0, 0, 0); d.setDate(d.getDate() - (d.getDay() + 6) % 7);
+    for (var i = 0; i < 26; i++) {
+      var lun = new Date(d); lun.setDate(d.getDate() - 7 * i);
+      var vie = new Date(lun); vie.setDate(lun.getDate() + 4);
+      var o = el('option', null, dosD(lun.getDate()) + '/' + dosD(lun.getMonth() + 1) + ' al ' + dosD(vie.getDate()) + '/' + dosD(vie.getMonth() + 1) + '/' + vie.getFullYear() + (i === 0 ? ' (semana en curso)' : ''));
+      o.value = isoLocal(lun); sel.appendChild(o);
+    }
+  }
+  function abrirReporteSemanal(lunesIso){
+    llenarSemanas();
+    llamar('reporteSemanalValvulas', [S.token, lunesIso || ''], function(r){
+      $('rSemana').value = r.lunesIso;
+      pintarReporteSemanal(r);
+      $('vApp').classList.add('oculto'); $('vReporte').classList.remove('oculto');
+      window.scrollTo(0, 0);
+    });
+  }
+  $('vReporteBtn').addEventListener('click', function(){ abrirReporteSemanal(''); });
+  $('rSemana').addEventListener('change', function(){ abrirReporteSemanal(this.value); });
+  $('rVolver').addEventListener('click', function(){ $('vReporte').classList.add('oculto'); $('vApp').classList.remove('oculto'); window.scrollTo(0, 0); });
+  $('rImprimir').addEventListener('click', function(){
+    var prev = document.title;
+    document.title = 'Reporte_valvulas_semana_' + $('rSemana').value;
+    $('rFechaImp').textContent = ahoraTxt();
+    setTimeout(function(){ window.print(); document.title = prev; }, 50);
+  });
+
+  function tabla(cols, filas){
+    var t = el('table'), th = el('thead'), tr = el('tr');
+    cols.forEach(function(c){ var h = el('th', c.n ? 'n' : null, c.t); tr.appendChild(h); });
+    th.appendChild(tr); t.appendChild(th);
+    var tb = el('tbody');
+    filas.forEach(function(f){
+      var r = el('tr');
+      f.forEach(function(v, i){ var td = el('td', cols[i].n ? 'n' : null); if (v && v.nodeType) td.appendChild(v); else td.textContent = v == null ? '' : String(v); r.appendChild(td); });
+      tb.appendChild(r);
+    });
+    t.appendChild(tb); return t;
+  }
+  function kpi(cont, valor, etq, rojo){ var k = el('div', 'kpi' + (rojo ? ' rojo' : '')); k.appendChild(el('b', null, String(valor))); k.appendChild(el('span', null, etq)); cont.appendChild(k); }
+  function txtAtraso(p){
+    var t = !p.fiIso ? 'Sin fecha' : p.atraso === 0 ? 'Al día' : p.atraso + (p.atraso === 1 ? ' día' : ' días');
+    if (p.intentos) t += ' · no localizado (' + p.intentos + ')';
+    return t;
+  }
+
+  // ---- gráficas SVG (se imprimen igual en el PDF) ----
+  var SVGNS = 'http://www.w3.org/2000/svg';
+  function sv(tag, at, txt){ var e = document.createElementNS(SVGNS, tag); for (var k in at) e.setAttribute(k, at[k]); if (txt != null) e.textContent = txt; return e; }
+  function techo(m){ if (m <= 4) return 4; var p = Math.pow(10, Math.floor(Math.log(m) / Math.LN10)), f = m / p; return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * p; }
+  function ejes(g, W, H, M, max, n, etiquetas){
+    var pw = W - M.l - M.r, ph = H - M.t - M.b;
+    for (var i = 0; i <= 4; i++) {
+      var y = M.t + ph - ph * i / 4, v = Math.round(max * i / 4);
+      g.appendChild(sv('line', { x1: M.l, x2: W - M.r, y1: y, y2: y, stroke: i ? '#ECECEC' : '#BDBDBD', 'stroke-width': 1 }));
+      g.appendChild(sv('text', { x: M.l - 6, y: y + 3.5, 'text-anchor': 'end', 'font-size': 10, fill: '#5F5F5F' }, String(v)));
+    }
+    var paso = n > 16 ? 3 : n > 9 ? 2 : 1;
+    etiquetas.forEach(function(t, i){
+      if (i % paso && i !== n - 1) return;
+      g.appendChild(sv('text', { x: M.l + pw * (i + 0.5) / n, y: H - M.b + 14, 'text-anchor': 'middle', 'font-size': 10, fill: '#5F5F5F' }, t));
+    });
+  }
+  function graficaBarras(sem){
+    var W = 760, H = 210, M = { l: 34, r: 8, t: 10, b: 22 }, n = sem.length;
+    var max = techo(Math.max.apply(null, sem.map(function(w){ return Math.max(w.col, w.abr); }).concat([1])));
+    var pw = W - M.l - M.r, ph = H - M.t - M.b, gw = pw / n, bw = Math.max(3, Math.min(16, (gw - 8) / 2));
+    var cont = el('div', 'graf'); cont.appendChild(el('div', 'tit', 'Trabajos por semana'));
+    var ley = el('div', 'leyenda');
+    [['#B35300', 'Válvulas colocadas'], ['#2E6DB4', 'Abiertas / reconectadas']].forEach(function(x){ var s = el('span'); var i = el('i'); i.style.background = x[0]; s.appendChild(i); s.appendChild(document.createTextNode(x[1])); ley.appendChild(s); });
+    cont.appendChild(ley);
+    var svg = sv('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': 'Válvulas colocadas y abiertas por semana' });
+    ejes(svg, W, H, M, max, n, sem.map(function(w){ return w.lunes; }));
+    sem.forEach(function(w, i){
+      var cx = M.l + gw * (i + 0.5);
+      [[w.col, '#B35300', -1, 'colocadas'], [w.abr, '#2E6DB4', 1, 'abiertas']].forEach(function(b){
+        if (!b[0]) return;
+        var hgt = ph * b[0] / max, x = b[2] < 0 ? cx - bw - 1 : cx + 1, y = M.t + ph - hgt, rr = Math.min(3, bw / 2, hgt);
+        var d = 'M' + x + ',' + (M.t + ph) + 'V' + (y + rr) + 'Q' + x + ',' + y + ' ' + (x + rr) + ',' + y + 'H' + (x + bw - rr) + 'Q' + (x + bw) + ',' + y + ' ' + (x + bw) + ',' + (y + rr) + 'V' + (M.t + ph) + 'Z';
+        var p = sv('path', { d: d, fill: b[1] }); p.appendChild(sv('title', {}, 'Semana del ' + w.lunes + ': ' + b[0] + ' ' + b[3])); svg.appendChild(p);
+      });
+    });
+    cont.appendChild(svg); return cont;
+  }
+  function graficaLinea(sem){
+    var W = 760, H = 190, M = { l: 34, r: 30, t: 14, b: 22 }, n = sem.length;
+    var max = techo(Math.max.apply(null, sem.map(function(w){ return w.activas; }).concat([1])));
+    var pw = W - M.l - M.r, ph = H - M.t - M.b;
+    var cont = el('div', 'graf'); cont.appendChild(el('div', 'tit', 'Válvulas activas al cierre de cada semana'));
+    var svg = sv('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': 'Válvulas activas al cierre de cada semana' });
+    ejes(svg, W, H, M, max, n, sem.map(function(w){ return w.lunes; }));
+    var pts = sem.map(function(w, i){ return [M.l + pw * (i + 0.5) / n, M.t + ph - ph * w.activas / max]; });
+    svg.appendChild(sv('polyline', { points: pts.map(function(p){ return p.join(','); }).join(' '), fill: 'none', stroke: '#B35300', 'stroke-width': 2, 'stroke-linejoin': 'round' }));
+    pts.forEach(function(p, i){ var c = sv('circle', { cx: p[0], cy: p[1], r: 4, fill: '#B35300', stroke: '#fff', 'stroke-width': 2 }); c.appendChild(sv('title', {}, 'Semana del ' + sem[i].lunes + ': ' + sem[i].activas + ' válvulas activas')); svg.appendChild(c); });
+    var u = pts[pts.length - 1];
+    svg.appendChild(sv('text', { x: u[0], y: u[1] - 9, 'text-anchor': 'middle', 'font-size': 11, 'font-weight': 700, fill: '#2B2B2B' }, String(sem[n - 1].activas)));
+    cont.appendChild(svg); return cont;
+  }
+
+  function pintarReporteSemanal(r){
+    var h = $('rHoja'); h.innerHTML = '';
+    var I = r.instrucciones;
+    var cab = el('div', 'rep-cab');
+    var lg = el('img'); lg.src = LOGO; lg.alt = 'Agua Potable Lagos de Moreno'; cab.appendChild(lg);
+    var t = el('div', 't');
+    t.appendChild(el('b', null, 'Reporte semanal de válvulas'));
+    t.appendChild(el('span', null, 'Semana del lunes ' + r.lunes + ' al viernes ' + r.viernes));
+    t.appendChild(el('span', null, r.enCurso ? 'Semana en curso · estatus al ' + r.corte : 'Estatus al cierre de la semana (' + r.corte + ')'));
+    cab.appendChild(t); h.appendChild(cab);
+
+    // 1. Resumen de la semana
+    h.appendChild(el('h2', null, '1. Resumen de la semana'));
+    var k1 = el('div', 'kpis');
+    kpi(k1, r.resumen.instrTotal, 'Instrucciones dadas');
+    kpi(k1, r.resumen.trabajos, 'Trabajos realizados');
+    kpi(k1, r.resumen.noLocalizados, 'Visitas sin localizar (N/E)', r.resumen.noLocalizados > 0);
+    h.appendChild(k1);
+    var dos = el('div', 'rep-dos');
+    var c1 = el('div'); c1.appendChild(el('h3', null, 'Instrucciones dadas'));
+    c1.appendChild(tabla([{ t: 'Instrucción' }, { t: 'Cantidad', n: 1 }], ORDEN_INSTR.map(function(k){ return [I[k], r.resumen.instrucciones[k]]; })));
+    var c2 = el('div'); c2.appendChild(el('h3', null, 'Trabajos ejecutados'));
+    c2.appendChild(tabla([{ t: 'Acción' }, { t: 'Cantidad', n: 1 }], r.resumen.acciones.map(function(a){ return [a.t, a.n]; })));
+    dos.appendChild(c1); dos.appendChild(c2); h.appendChild(dos);
+
+    // 2. Estatus
+    h.appendChild(el('h2', null, '2. Estatus al ' + r.corte));
+    var k2 = el('div', 'kpis');
+    kpi(k2, r.estatus.instaladas, 'Válvulas instaladas');
+    kpi(k2, r.estatus.pendTotal, 'Trabajos pendientes');
+    kpi(k2, r.estatus.atrasados, 'Pendientes atrasados', r.estatus.atrasados > 0);
+    kpi(k2, r.estatus.noLocalizados, 'Pendientes no localizados', r.estatus.noLocalizados > 0);
+    kpi(k2, r.estatus.canceladas, 'Servicios cancelados');
+    h.appendChild(k2);
+    h.appendChild(tabla([{ t: 'Pendientes por instrucción' }, { t: 'Cantidad', n: 1 }], ORDEN_INSTR.map(function(k){ return [I[k], r.estatus.pendientes[k]]; })));
+
+    var sec = 3;
+    // Por equipo (solo cuando hay equipos registrados)
+    if (r.usaEquipos) {
+      h.appendChild(el('h2', null, (sec++) + '. Trabajos por equipo en la semana'));
+      h.appendChild(tabla([{ t: 'Equipo' }, { t: 'Trabajos realizados', n: 1 }, { t: 'No localizados', n: 1 }, { t: 'Total de visitas', n: 1 }],
+        r.equipos.map(function(e){ return [e.equipo, e.trabajos, e.ne, e.trabajos + e.ne]; })));
+    }
+
+    // Ejecutados
+    h.appendChild(el('h2', null, (sec++) + '. Trabajos ejecutados en la semana (' + r.ejecutados.length + ')'));
+    if (!r.ejecutados.length) h.appendChild(el('p', 'sin', 'No hay trabajos ejecutados en esta semana.'));
+    else h.appendChild(tabla([{ t: 'Fecha' }, { t: 'Cuenta' }, { t: 'Domicilio' }, { t: 'Instrucción' }, { t: 'Acción' }].concat(r.usaEquipos ? [{ t: 'Equipo' }] : []),
+      r.ejecutados.map(function(x){ var a = el('span', x.ne ? 't-rojo-b' : null, x.acc); var f = [x.fe, x.cuenta, x.dom, I[x.instr] || '', a]; if (r.usaEquipos) f.push(x.equipo || '—'); return f; })));
+
+    // Pendientes
+    h.appendChild(el('h2', null, (sec++) + '. Pendientes al ' + r.corte + ' (' + (r.pendSemana.length + r.pendAnteriores.length) + ')'));
+    [['De esta semana', r.pendSemana], ['De semanas anteriores', r.pendAnteriores]].forEach(function(g){
+      h.appendChild(el('h3', null, g[0] + ' (' + g[1].length + ')'));
+      if (!g[1].length) { h.appendChild(el('p', 'sin', 'Ninguno.')); return; }
+      h.appendChild(tabla([{ t: 'Cuenta' }, { t: 'Domicilio' }, { t: 'Instrucción' }, { t: 'Fecha de instrucción' }, { t: 'Atraso (días hábiles)' }],
+        g[1].map(function(p){ var a = el('span', p.atraso >= 3 || p.intentos ? 't-rojo-b' : null, txtAtraso(p)); return [p.cuenta, p.dom, I[p.instr] || '', p.fi || '—', a]; })));
+    });
+
+    // Acumulado desde el inicio
+    var ac = r.acumulado;
+    if (ac && ac.semanas.length) {
+      h.appendChild(el('h2', null, (sec++) + '. Acumulado desde el inicio (' + ac.desde + ' al ' + r.corte + ')'));
+      var k3 = el('div', 'kpis');
+      kpi(k3, ac.tot.col, 'Válvulas colocadas');
+      kpi(k3, ac.tot.abr, 'Abiertas / reconectadas');
+      kpi(k3, ac.tot.can, 'Cancelaciones de servicio');
+      kpi(k3, ac.tot.ne, 'Visitas sin localizar');
+      kpi(k3, ac.tot.activas, 'Válvulas activas al ' + r.corte);
+      h.appendChild(k3);
+      h.appendChild(graficaBarras(ac.semanas));
+      h.appendChild(graficaLinea(ac.semanas));
+      h.appendChild(tabla([{ t: 'Semana (lunes)' }, { t: 'Colocadas', n: 1 }, { t: 'Abiertas', n: 1 }, { t: 'Cancelaciones', n: 1 }, { t: 'Sin localizar', n: 1 }, { t: 'Activas al cierre', n: 1 }],
+        ac.semanas.map(function(w){ return [w.lunes, w.col, w.abr, w.can, w.ne, w.activas]; })));
+    }
+
+    var pie = el('div', 'rep-pie');
+    pie.appendChild(document.createTextNode('Generado el '));
+    var sf = el('span'); sf.id = 'rFechaImp'; sf.textContent = ahoraTxt(); pie.appendChild(sf);
+    pie.appendChild(document.createTextNode(' por ' + r.generadoPor + '. Documento interno de Agua Potable y Alcantarillado de Lagos de Moreno; contiene datos de cuentas de usuarios.'));
+    h.appendChild(pie);
+  }
 
   // ---------- inicio ----------
   var t = leerToken();
