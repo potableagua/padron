@@ -506,7 +506,8 @@ if ('serviceWorker' in navigator) { window.addEventListener('load', function(){ 
     if (s === 'SIN TOMA') return { t: 'Sin toma', c: 'c-gris' };
     if (s.indexOf('SUSP') === 0) return { t: 'Suspensión temporal', c: 'c-gris' };
     if (!v && s.indexOf('VALVULA') === 0) return { t: 'Válvula limitada', c: 'c-amb' };
-    if (s === 'NOTIFICADO') return { t: 'Notificado', c: 'c-ama' };
+    // La tabla de válvulas manda sobre "Notificado" cuando hay válvula, aviso o colocación pendiente
+    if (s === 'NOTIFICADO' && (!v || v === 'NINGUNO')) return { t: 'Notificado', c: 'c-ama' };
     if (s === 'INDEFINIDO') return { t: 'Indefinido', c: 'c-gris' };
     if (c.saldo > 0) {
       if (v === 'INSTALADA') return { t: 'Con adeudo / Válvula instalada', c: 'c-amb larga' };
